@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Ray Marching with SDF Demo</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #canvas {
+            display: block;
+        }
+
+        #playButton {
+            fill: darkgray;
+            width: 30px;
+            height: 30px;
+            top: 10px;
+            left: 10px;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="playButton" style="position: absolute; top: 10px; left: 10px; cursor: pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+            <path d="M208 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16zM352 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16z"/>
+        </svg>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script src="demo.js"></script>
+</body>
+
+</html>
