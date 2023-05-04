@@ -36,6 +36,7 @@ function updateSpinningAngle() {
     }
 }
 
+// Signed Distance Function
 function signedDistanceToShapes(p) {
     return Math.min(...shapes.map(shape => {
         switch (shape.type) {
@@ -82,7 +83,6 @@ function pointInTriangle(p, p1, p2, p3) {
     const hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
     return !(hasNeg && hasPos);
 }
-
 
 function rayMarching(start, direction, maxSteps, maxDistance, minDistance) {
     let currentPosition = { x: start.x, y: start.y };
@@ -160,51 +160,6 @@ function drawIntersectionPoints() {
     });
 }
 
-
-// Interactive rendering
-canvas.addEventListener("mousemove", (e) => {
-    if (!isPlaying) {
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-
-        const start = { x: canvas.width / 2, y: canvas.height / 2 };
-        const angle = Math.atan2(mouseY - start.y, mouseX - start.x);
-        const maxDistance = 10 * Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
-        const minDistance = 0.1;
-
-        // Clear the canvas before rendering rays
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Render shapes
-        shapes.forEach(shape => {
-            ctx.beginPath();
-            switch (shape.type) {
-                case 'circle':
-                    ctx.arc(shape.x, shape.y, shape.radius, 0, 2 * Math.PI);
-                    break;
-                case 'square':
-                    ctx.rect(shape.x - shape.size / 2, shape.y - shape.size / 2, shape.size, shape.size);
-                    break;
-                case 'triangle':
-                    const k = Math.sqrt(3) / 2;
-                    ctx.moveTo(shape.x - shape.size / 2, shape.y + k * shape.size / 2);
-                    ctx.lineTo(shape.x + shape.size / 2, shape.y + k * shape.size / 2);
-                    ctx.lineTo(shape.x, shape.y - k * shape.size / 2);
-                    ctx.closePath();
-                    break;
-            }
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.fill();
-        });
-
-
-        render(start, angle, maxDistance, minDistance);
-    }
-    // Draw intersection points
-    drawIntersectionPoints();
-});
-
 function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -259,23 +214,6 @@ function drawShapes() {
     });
 }
 
-window.onload = () => {
-    updateSpinningAngle()
-}
-
-document.getElementById("playButton").addEventListener("click", (e) => {
-    isPlaying = !isPlaying;
-
-    spinningAngle = Math.atan2(mouseY - canvas.height / 2, mouseX - canvas.width / 2);
-    const svgElement = document.querySelector("svg"); // Add this line
-    if (isPlaying) {
-        svgElement.innerHTML = '<path d="M208 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16zM352 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16z"/>';
-        updateSpinningAngle();
-    } else {
-        svgElement.innerHTML = '<path d="M133 440a35.37 35.37 0 01-17.5-4.67c-12-6.8-19.46-20-19.46-34.33V111c0-14.37 7.46-27.53 19.46-34.33a35.13 35.13 0 0135.77.45l247.85 148.36a36 36 0 010 61l-247.89 148.4A35.5 35.5 0 01133 440z"/>';
-        handleMouseMove({ clientX: mouseX + canvas.getBoundingClientRect().left, clientY: mouseY + canvas.getBoundingClientRect().top });
-    }
-});
 
 function handleMouseMove(e) {
     const rect = canvas.getBoundingClientRect();
@@ -301,6 +239,53 @@ function handleMouseMove(e) {
     }
 }
 
+// Interactive rendering
+canvas.addEventListener("mousemove", (e) => {
+    if (!isPlaying) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const start = { x: canvas.width / 2, y: canvas.height / 2 };
+        const angle = Math.atan2(mouseY - start.y, mouseX - start.x);
+        const maxDistance = 10 * Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
+        const minDistance = 0.1;
+
+        // Clear the canvas before rendering rays
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Render shapes
+        shapes.forEach(shape => {
+            ctx.beginPath();
+            switch (shape.type) {
+                case 'circle':
+                    ctx.arc(shape.x, shape.y, shape.radius, 0, 2 * Math.PI);
+                    break;
+                case 'square':
+                    ctx.rect(shape.x - shape.size / 2, shape.y - shape.size / 2, shape.size, shape.size);
+                    break;
+                case 'triangle':
+                    const k = Math.sqrt(3) / 2;
+                    ctx.moveTo(shape.x - shape.size / 2, shape.y + k * shape.size / 2);
+                    ctx.lineTo(shape.x + shape.size / 2, shape.y + k * shape.size / 2);
+                    ctx.lineTo(shape.x, shape.y - k * shape.size / 2);
+                    ctx.closePath();
+                    break;
+            }
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fill();
+        });
+
+
+        render(start, angle, maxDistance, minDistance);
+    }
+    // Draw intersection points
+    drawIntersectionPoints();
+});
+
+
+// All Listeners
+
 window.addEventListener("mousemove", handleMouseMove);
 
 window.addEventListener("keydown", (e) => {
@@ -317,5 +302,23 @@ window.addEventListener("keydown", (e) => {
     }
     else if (e.key === "ArrowDown") {
         rotationSpeed -= 0.001;
+    }
+});
+
+window.onload = () => {
+    updateSpinningAngle()
+}
+
+document.getElementById("playButton").addEventListener("click", (e) => {
+    isPlaying = !isPlaying;
+
+    spinningAngle = Math.atan2(mouseY - canvas.height / 2, mouseX - canvas.width / 2);
+    const svgElement = document.querySelector("svg"); // Add this line
+    if (isPlaying) {
+        svgElement.innerHTML = '<path d="M208 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16zM352 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16z"/>';
+        updateSpinningAngle();
+    } else {
+        svgElement.innerHTML = '<path d="M133 440a35.37 35.37 0 01-17.5-4.67c-12-6.8-19.46-20-19.46-34.33V111c0-14.37 7.46-27.53 19.46-34.33a35.13 35.13 0 0135.77.45l247.85 148.36a36 36 0 010 61l-247.89 148.4A35.5 35.5 0 01133 440z"/>';
+        handleMouseMove({ clientX: mouseX + canvas.getBoundingClientRect().left, clientY: mouseY + canvas.getBoundingClientRect().top });
     }
 });
